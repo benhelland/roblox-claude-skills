@@ -12,6 +12,8 @@ Claude Code skills for Roblox/Luau development. These give Claude context-aware 
 | `script-scaffold` | "create a new script for X" | Generates Luau files with correct Rojo naming and boilerplate |
 | `world-builder` | "spawn a part", "build a floor grid" | Creates and manipulates 3D objects in Studio via MCP |
 | `studio-debug` | "run this code", "check the output log" | Executes Luau and inspects runtime state via MCP |
+| `scene-architect` | "build me an arena", "create a parkour course" | Translates plain-English scene descriptions into 3D geometry via MCP |
+| `game-bootstrap` | "bootstrap a sword fighting game" | Scaffolds a full game from a concept — scripts, remotes, systems, and a starter scene |
 
 ## Install
 
@@ -25,6 +27,8 @@ Copy each skill folder into `~/.claude/skills/`:
   script-scaffold/SKILL.md
   world-builder/SKILL.md
   studio-debug/SKILL.md
+  scene-architect/SKILL.md
+  game-bootstrap/SKILL.md
 ```
 
 On Windows: `~/.claude/` is at `C:\Users\<you>\.claude\`
@@ -35,7 +39,7 @@ On Windows: `~/.claude/` is at `C:\Users\<you>\.claude\`
 git clone https://github.com/benhelland/roblox-claude-skills
 cd roblox-claude-skills
 mkdir -p ~/.claude/skills
-cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug ~/.claude/skills/
+cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap ~/.claude/skills/
 ```
 
 ## Requirements

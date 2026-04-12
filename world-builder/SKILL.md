@@ -70,6 +70,16 @@ Create and manipulate 3D objects in a live Roblox place via MCP tools — no man
 3. Call `get_instance_children` on Workspace to verify count
 4. If something's off, `undo` and adjust
 
+## Saving to src/workspace
+
+Objects created via MCP live only in the live Studio session — they won't survive a Rojo sync unless saved to disk. After finishing a build:
+
+1. Always group the created geometry under a named `Model` in Workspace (if not already).
+2. In Studio's Explorer, right-click the Model → **Save to File** → save as `.rbxm` into `src/workspace/`.
+3. Rojo will pick it up automatically on the next sync.
+
+Name the file to match the Model name (e.g. `Arena.rbxm`, `Baseplate.rbxm`).
+
 ## Gotchas
 
 - Roblox parts placed via MCP appear immediately in Studio — no need to save or sync.

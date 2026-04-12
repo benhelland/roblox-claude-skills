@@ -27,16 +27,23 @@ Turn a game concept into a working project skeleton in one shot — scripts, ser
 ```
 src/
   server/
-    GameManager.server.luau    — game state, round loop, win conditions
-    PlayerService.server.luau  — player join/leave, data init
-    <Feature>Service.server.luau — one file per major server system
-  client/
-    Main.client.luau            — client entry point
+    GameManager.server.luau       — game state, round loop, win conditions
+    PlayerService.server.luau     — player join/leave, data init
+    <Feature>Service.server.luau  — one file per major server system
+  player/
+    Main.client.luau              — client entry point
     <Feature>Controller.client.luau — one file per major client system
-  shared/
-    Remotes.luau                — single source of truth for all RemoteEvents
-    GameConfig.luau             — tunable constants (speed, damage, timers)
-    Types.luau                  — shared type definitions (optional but good)
+  character/
+    <Feature>.client.luau         — character-level client scripts
+  gui/
+    <Screen>Controller.client.luau — UI scripts
+  replicatedStorage/
+    Remotes.luau                  — single source of truth for all RemoteEvents
+    GameConfig.luau               — tunable constants (speed, damage, timers)
+    Types.luau                    — shared type definitions
+  workspace/
+    Baseplate.rbxm                — static world geometry saved from Studio
+    <Scene>.rbxm
 ```
 
 ## Core systems by game type
@@ -102,5 +109,6 @@ Use `scene-architect` to build a minimal playable space matching the game type:
 - Server scripts validate everything from the client. Never trust `RemoteEvent` arguments.
 - Stub unimplemented logic with `-- TODO: implement X` rather than leaving empty functions or broken code.
 - Read `default.project.json` first to confirm the src/ mapping before writing any files.
+- After scaffolding scripts, use `scene-architect` to build the starter scene, then instruct the user to right-click each top-level Model in Studio Explorer → **Save to File** → save as `.rbxm` into `src/workspace/` so Rojo tracks the geometry.
 - After scaffolding, print a summary: files created, systems wired, what the user should implement next.
 - Use `execute_luau` via `studio-debug` to verify the place loads without script errors after bootstrapping.

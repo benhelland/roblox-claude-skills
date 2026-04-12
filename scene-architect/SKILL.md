@@ -69,6 +69,16 @@ Turn a natural language description into a complete 3D scene in Roblox Studio us
 - After the build, summarize what was created (part count, rough dimensions, notable features) so the user knows what they're working with.
 - If the user asks for something that would require hundreds of parts (a full city, detailed terrain), suggest using Roblox's Terrain tools instead and build a simpler stand-in.
 
+## Saving to src/workspace
+
+After the user is happy with the scene, save it so Rojo tracks it:
+
+1. All scene geometry should already be grouped under a named `Model` in Workspace — create one if not.
+2. In Studio's Explorer, right-click the Model → **Save to File** → save as `.rbxm` into `src/workspace/`.
+3. Rojo syncs it automatically on the next serve.
+
+Name the file to match the Model (e.g. `Arena.rbxm`, `ObstacleCourse.rbxm`). Individual persistent objects (Baseplate, SpawnLocation) should be saved as their own `.rbxm` files.
+
 ## Asking for changes
 
 After building, always invite feedback: "Want me to adjust the scale, materials, or layout?" Changes are faster with `undo` + rebuild than trying to surgically edit dozens of parts.

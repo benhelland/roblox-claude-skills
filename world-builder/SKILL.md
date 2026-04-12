@@ -5,84 +5,169 @@ description: Create, arrange, and manipulate 3D objects in Roblox Studio Workspa
 
 # world-builder
 
-Create and manipulate 3D objects in a live Roblox place via MCP tools — no manual Studio interaction needed.
+Create and manipulate 3D objects in a live Roblox place via MCP — no manual Studio interaction needed.
 
-## When to use
-
-- "Spawn a part at X position"
-- "Create a grid of platforms"
-- "Make a 10x10 floor out of parts"
-- "Clone this object 5 times"
-- "Set the color/size/material of all parts in X"
-- "Delete everything in the Workspace called Y"
-- "Build a basic room/arena/obstacle"
-
-## Core MCP tools
+## MCP tools
 
 | Tool | Use |
 |---|---|
-| `create_object` | Spawn a single instance (Part, Model, Folder, etc.) |
-| `set_property` | Set one property on an instance |
-| `set_properties` | Set multiple properties on one instance at once (prefer over repeated set_property) |
-| `mass_create_objects` | Create many objects in one call — use for grids, arrays, repeated geometry |
-| `mass_set_property` | Set a property on many instances at once |
+| `create_object` | Spawn any instance (Part, Model, Light, Effect, etc.) |
+| `set_properties` | Set multiple properties at once — always prefer over repeated `set_property` |
+| `mass_create_objects` | Create many objects in one call — grids, arrays, repeated geometry |
+| `mass_set_property` | Set one property across many instances |
 | `clone_object` | Duplicate an existing instance |
-| `smart_duplicate` | Duplicate with offset — good for evenly spaced repeated objects |
+| `smart_duplicate` | Duplicate with positional offset — evenly spaced repetition |
 | `mass_duplicate` | Duplicate multiple objects at once |
-| `move_object` | Reposition an instance (sets CFrame or Position) |
+| `move_object` | Reposition (sets CFrame or Position) |
 | `delete_object` | Remove an instance |
 | `rename_object` | Rename an instance |
-| `get_instance_properties` | Inspect current properties before editing |
-| `get_instance_children` | See what's inside a container before modifying |
-| `search_objects` | Find instances by name/class before acting on them |
-| `undo` / `redo` | Roll back or reapply changes |
+| `get_instance_properties` | Inspect before editing |
+| `get_instance_children` | See contents of a container |
+| `search_objects` | Find instances by name/class |
+| `capture_screenshot` | Verify the build visually |
+| `undo` / `redo` | Roll back or reapply |
 
-## Rules
+## Part types
 
-- Always prefer `set_properties` over multiple `set_property` calls — it's one round trip.
-- Use `mass_create_objects` for anything involving repetition (grids, rows, walls). Never loop `create_object` in your head and make 20 individual calls.
-- Always specify `Parent` when creating — default parent is not guaranteed. Use `game.Workspace` for visible geometry.
-- For positions, Roblox uses Y-up coordinates. Ground level is Y=0 (or Y=surface/2 to sit on the baseplate). The Baseplate is at Y=0 and is 512x512 studs by default.
-- Parts are anchored by default via MCP — set `Anchored = true` explicitly if physics shouldn't move them.
-- After bulk operations, call `get_instance_children` or `search_objects` to confirm the result looks right before continuing.
-- Always call `undo` if something goes wrong rather than manually deleting — it's faster and cleaner.
+| Class | Shape | Use |
+|---|---|---|
+| `Part` | Block (default) | General geometry — floors, walls, platforms |
+| `Part` | `Shape: Ball` | Spheres, decorations, projectile stand-ins |
+| `Part` | `Shape: Cylinder` | Pillars, pipes, barrels |
+| `Part` | `Shape: Wedge` | Ramps, diagonal surfaces |
+| `Part` | `Shape: CornerWedge` | Corner ramps, angled joins |
+| `WedgePart` | Wedge | Explicit wedge class |
+| `CornerWedgePart` | Corner wedge | Explicit corner wedge class |
+| `TrussPart` | Truss | Climbable scaffold structure |
+| `SpawnLocation` | — | Player spawn point |
+| `Model` | — | Container for grouping parts |
+| `Folder` | — | Logical grouping, no 3D presence |
 
-## Common property reference
+## Part properties
 
 | Property | Type | Notes |
 |---|---|---|
 | `Size` | Vector3 | `{X, Y, Z}` in studs |
 | `Position` | Vector3 | World position |
-| `CFrame` | CFrame | Position + rotation together |
-| `Anchored` | bool | Prevents physics from moving the part |
-| `BrickColor` | BrickColor | Legacy color — prefer `Color` |
-| `Color` | Color3 | RGB 0–1 range |
-| `Material` | Enum.Material | SmoothPlastic, Neon, Glass, etc. |
-| `Transparency` | number | 0 = opaque, 1 = invisible |
-| `CanCollide` | bool | Whether other parts collide with it |
-| `Shape` | Enum.PartType | Block, Ball, Cylinder, Wedge |
-| `Name` | string | Instance name in Explorer |
+| `CFrame` | CFrame | Position + rotation — use for rotated parts |
+| `Anchored` | bool | `true` = physics won't move it. Always set for static geometry |
+| `CanCollide` | bool | `false` for triggers, kill zones, invisible boundaries |
+| `CanTouch` | bool | `false` to disable Touched events entirely |
+| `CastShadow` | bool | `false` on small/decorative parts saves performance |
+| `Transparency` | number | 0 = solid, 1 = invisible |
+| `Reflectance` | number | 0–1, metallic sheen |
+| `Color` | Color3 | RGB 0–1. Prefer over BrickColor |
+| `Material` | Enum.Material | See material table below |
+| `TopSurface` / `BottomSurface` | Enum.SurfaceType | Smooth (default), Studs, Inlet, Weld |
+| `Massless` | bool | `true` = no contribution to assembly mass |
+| `CollisionGroup` | string | Physics collision filtering group name |
 
-## Workflow example — building a floor grid
+## Materials
 
-1. Decide part size and grid dimensions
-2. Use `mass_create_objects` with calculated positions for each tile
-3. Call `get_instance_children` on Workspace to verify count
-4. If something's off, `undo` and adjust
+**Plastic / Smooth**
+| Material | Look |
+|---|---|
+| `SmoothPlastic` | Clean matte — best default for most builds |
+| `Plastic` | Slight sheen, more toy-like |
+| `Neon` | Emits light, ignores shadows — indicators, lava, effects |
+| `ForceField` | Holographic hexagon pattern |
+| `Glass` | Transparent with refraction |
+
+**Metal**
+| Material | Look |
+|---|---|
+| `Metal` | Brushed metal |
+| `DiamondPlate` | Checkered grip plate |
+| `Foil` | Shiny crinkled foil |
+| `CorrodedMetal` | Rusty, aged metal |
+
+**Stone / Earth**
+| Material | Look |
+|---|---|
+| `Slate` | Dark flat stone |
+| `Concrete` | Gray urban surface |
+| `Granite` | Speckled stone |
+| `Marble` | Polished veined stone |
+| `Brick` | Classic red brick |
+| `Cobblestone` | Irregular stone road |
+| `Rock` | Rough natural rock |
+| `Sandstone` | Warm tan layered stone |
+| `Basalt` | Dark volcanic rock |
+| `Limestone` | Light sedimentary stone |
+| `Pebble` | Rounded pebble texture |
+| `Pavement` | Smooth urban pavement |
+| `Asphalt` | Dark road surface |
+| `CrackedLava` | Hardened lava with glowing cracks |
+
+**Nature**
+| Material | Look |
+|---|---|
+| `Grass` | Green grass |
+| `LeafyGrass` | Denser, leafy grass variant |
+| `Ground` | Bare dirt/earth |
+| `Mud` | Wet dark earth |
+| `Sand` | Tan sandy surface |
+| `RedCrackedDirt` | Dry cracked desert earth |
+| `Salt` | White crystalline flat |
+| `Snow` | White fluffy snow |
+| `Glacier` | Smooth blue-white ice |
+| `Ice` | Clear blue ice |
+
+**Fabric / Organic**
+| Material | Look |
+|---|---|
+| `Fabric` | Cloth/canvas texture |
+| `Wood` | Plank-cut wood |
+| `WoodPlanks` | Horizontal wooden planks |
+
+## Lighting objects
+
+Add lights as children of a Part to illuminate the scene.
+
+| Class | Use | Key properties |
+|---|---|---|
+| `PointLight` | Omnidirectional light from a part | `Brightness`, `Range`, `Color` |
+| `SpotLight` | Cone of light in part's facing direction | `Brightness`, `Range`, `Angle`, `Color` |
+| `SurfaceLight` | Light across a surface face | `Brightness`, `Range`, `Face`, `Color` |
+
+Create via `create_object` with `Parent` set to the part. E.g. a torch = orange `PointLight` inside a cylindrical part.
+
+## Effects & decorations
+
+| Class | Parent | Use |
+|---|---|---|
+| `ParticleEmitter` | Part | Continuous particle effect (fire, smoke, sparks) |
+| `Smoke` | Part | Rising smoke column |
+| `Fire` | Part | Flame effect |
+| `Sparkles` | Part | Floating sparkle effect |
+| `BillboardGui` | Part | Floating 2D UI above a part (labels, markers) |
+| `SelectionBox` | Workspace | Highlights a part with a colored outline |
+| `Decal` | Part | Image on a part face |
+| `Texture` | Part | Tiling image on a part face |
+| `SpecialMesh` | Part | Custom mesh shape (Sphere, Cylinder, FileMesh, etc.) |
+
+## Coordinate system
+
+- Y is up. Baseplate surface = Y=0, size 512×512 centered at origin.
+- Part sitting on baseplate: `Position.Y = Size.Y / 2`
+- Player height ≈ 5 studs. Door height = 8–10 studs. Ceiling = 12–16 studs.
+- CFrame rotation in degrees: `{0, 90, 0}` = 90° around Y axis.
+
+## Rules
+
+- Always `set_properties` over multiple `set_property` — one round trip.
+- `mass_create_objects` for any repetition. Never mentally loop `create_object`.
+- Always set `Parent` on creation. Use `game.Workspace` for visible geometry.
+- `Anchored = true` on all static parts unless physics is intentional.
+- Group all created geometry under a named `Model` before finishing.
+- Verify with `capture_screenshot` or `get_instance_children` after bulk operations.
+- `undo` on mistakes — faster than manual cleanup.
+- Cap single `mass_create_objects` calls at ~100 parts; check with user for larger builds.
 
 ## Saving to src/workspace
 
-Objects created via MCP live only in the live Studio session — they won't survive a Rojo sync unless saved to disk. After finishing a build:
+MCP changes live only in the Studio session — Rojo won't track them unless saved:
 
-1. Always group the created geometry under a named `Model` in Workspace (if not already).
-2. In Studio's Explorer, right-click the Model → **Save to File** → save as `.rbxm` into `src/workspace/`.
-3. Rojo will pick it up automatically on the next sync.
-
-Name the file to match the Model name (e.g. `Arena.rbxm`, `Baseplate.rbxm`).
-
-## Gotchas
-
-- Roblox parts placed via MCP appear immediately in Studio — no need to save or sync.
-- Don't create more than ~100 parts in a single `mass_create_objects` call without checking with the user first.
-- `Model` objects need a `PrimaryPart` set if you plan to use `Model:SetPrimaryPartCFrame` later.
-- Neon material ignores lighting and always glows — useful for indicators/effects but not structural parts.
+1. Group geometry under a named `Model` in Workspace.
+2. Studio Explorer → right-click Model → **Save to File** → `src/workspace/ModelName.rbxm`
+3. Rojo picks it up on next sync.

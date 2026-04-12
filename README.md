@@ -15,35 +15,75 @@ Claude Code skills for Roblox/Luau development. These give Claude context-aware 
 | `scene-architect` | "build me an arena", "create a parkour course" | Translates plain-English scene descriptions into 3D geometry via MCP |
 | `game-bootstrap` | "bootstrap a sword fighting game" | Scaffolds a full game from a concept — scripts, remotes, systems, and a starter scene |
 
+---
+
 ## Install
 
-Copy each skill folder into `~/.claude/skills/`:
-
-```
-~/.claude/skills/
-  rojo-sync/SKILL.md
-  luau-lint/SKILL.md
-  roblox-api/SKILL.md
-  script-scaffold/SKILL.md
-  world-builder/SKILL.md
-  studio-debug/SKILL.md
-  scene-architect/SKILL.md
-  game-bootstrap/SKILL.md
-```
-
-On Windows: `~/.claude/` is at `C:\Users\<you>\.claude\`
-
-### Quick install (bash)
+### 1. Clone this repo
 
 ```bash
 git clone https://github.com/benhelland/roblox-claude-skills
 cd roblox-claude-skills
+```
+
+### 2. Copy skills into Claude's skills directory
+
+**Mac/Linux:**
+```bash
 mkdir -p ~/.claude/skills
 cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap ~/.claude/skills/
 ```
+
+**Windows (bash):**
+```bash
+mkdir -p "$USERPROFILE/.claude/skills"
+cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap "$USERPROFILE/.claude/skills/"
+```
+
+Each skill is a folder containing a `SKILL.md` file. The final structure should look like:
+
+```
+~/.claude/skills/
+  game-bootstrap/SKILL.md
+  luau-lint/SKILL.md
+  roblox-api/SKILL.md
+  rojo-sync/SKILL.md
+  scene-architect/SKILL.md
+  script-scaffold/SKILL.md
+  studio-debug/SKILL.md
+  world-builder/SKILL.md
+```
+
+Skills take effect in the next Claude Code session — no restart required in most cases.
+
+---
+
+## Update
+
+Pull the latest and re-copy any changed skills:
+
+```bash
+cd roblox-claude-skills
+git pull
+
+# re-copy all skills to pick up any changes
+cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap ~/.claude/skills/
+```
+
+Or copy only the specific skills that changed, e.g.:
+
+```bash
+cp -r world-builder ~/.claude/skills/
+```
+
+---
 
 ## Requirements
 
 - [Claude Code CLI](https://docs.anthropic.com/claude-code) installed and authenticated
 - [Aftman](https://github.com/LPGhatguy/aftman) with `rojo`, `selene`, `stylua` installed via `aftman install`
-- For MCP tools (`world-builder`, `studio-debug`): [boshyxd/robloxstudio-mcp](https://github.com/boshyxd/robloxstudio-mcp) registered with `claude mcp add`
+- For MCP tools (`world-builder`, `scene-architect`, `studio-debug`, `game-bootstrap`): [boshyxd/robloxstudio-mcp](https://github.com/boshyxd/robloxstudio-mcp) registered via:
+
+```bash
+claude mcp add robloxstudio -- npx -y robloxstudio-mcp@latest
+```

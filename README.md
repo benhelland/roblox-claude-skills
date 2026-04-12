@@ -14,6 +14,7 @@ Claude Code skills for Roblox/Luau development. These give Claude context-aware 
 | `studio-debug` | "run this code", "check the output log" | Executes Luau and inspects runtime state via MCP |
 | `scene-architect` | "build me an arena", "create a parkour course" | Translates plain-English scene descriptions into 3D geometry via MCP |
 | `game-bootstrap` | "bootstrap a sword fighting game" | Scaffolds a full game from a concept — scripts, remotes, systems, and a starter scene |
+| `ui-builder` | "build a HUD", "create a health bar", "make an inventory screen" | Builds ScreenGui/SurfaceGui/BillboardGui hierarchies in Studio via MCP |
 
 ---
 
@@ -31,13 +32,13 @@ cd roblox-claude-skills
 **Mac/Linux:**
 ```bash
 mkdir -p ~/.claude/skills
-cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap ~/.claude/skills/
+cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap ui-builder ~/.claude/skills/
 ```
 
 **Windows (bash):**
 ```bash
 mkdir -p "$USERPROFILE/.claude/skills"
-cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap "$USERPROFILE/.claude/skills/"
+cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap ui-builder "$USERPROFILE/.claude/skills/"
 ```
 
 Each skill is a folder containing a `SKILL.md` file. The final structure should look like:
@@ -67,7 +68,7 @@ cd roblox-claude-skills
 git pull
 
 # re-copy all skills to pick up any changes
-cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap ~/.claude/skills/
+cp -r rojo-sync luau-lint roblox-api script-scaffold world-builder studio-debug scene-architect game-bootstrap ui-builder ~/.claude/skills/
 ```
 
 Or copy only the specific skills that changed, e.g.:
